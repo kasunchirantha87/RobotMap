@@ -44,65 +44,65 @@
             if (lastSelected[0] == x) {
                 if (lastSelected[1] < y) {
                     for (var i = lastSelected[1] + 1; i <= y; i++) {
-                        if (typeof selected[x + '-' + i] === 'undefined') {
+                        //if (typeof selected[x + '-' + i] === 'undefined') {
                             selected[x + '-' + i] = true;
                             lastSelected = [];
                             lastSelected.push(x);
                             lastSelected.push(i);
                             $("#sq-" + x + "-" + i).addClass("pathDisplay");
                             console.log("#sq-" + x + "-" + i);
-                        }
-                        else {
-                            break;
-                        }
+                        //}
+                        //else {
+                        //    break;
+                        //}
                     }
                 }
                 else {
                     for (var i = lastSelected[1] - 1; i >= y; i--) {
-                        if (typeof selected[x + '-' + i] === 'undefined') {
+                        //if (typeof selected[x + '-' + i] === 'undefined') {
                             selected[x + '-' + i] = true;
                             lastSelected = [];
                             lastSelected.push(x);
                             lastSelected.push(i);
                             $("#sq-" + x + "-" + i).addClass("pathDisplay");
                             console.log("#sq-" + x + "-" + i);
-                        }
-                        else {
-                            break;
-                        }
+                        //}
+                        //else {
+                         //   break;
+                        //}
                     }
                 }
             }
             else if (lastSelected[1] == y) {
                 if (lastSelected[0] < x) {
                     for (var i = lastSelected[0] + 1; i <= x; i++) {
-                        if (typeof selected[i + '-' + y] === 'undefined') {
+                        //if (typeof selected[i + '-' + y] === 'undefined') {
                             selected[i + '-' + y] = true;
                             lastSelected = [];
                             lastSelected.push(i);
                             lastSelected.push(y);
                             $("#sq-" + i + "-" + y).addClass("pathDisplay");
                             console.log("#sq-" + i + "-" + y);
-                        }
-                        else {
-                            break;
-                        }
+                        //}
+                        //else {
+                        //    break;
+                        //}
                     }
 
                 }
                 else {
                     for (var i = lastSelected[0] - 1; i >= x; i--) {
-                        if (typeof selected[i + '-' + y] === 'undefined') {
+                        //if (typeof selected[i + '-' + y] === 'undefined') {
                             selected[i + '-' + y] = true;
                             lastSelected = [];
                             lastSelected.push(i);
                             lastSelected.push(y);
                             $("#sq-" + i + "-" + y).addClass("pathDisplay");
                             console.log("#sq-" + i + "-" + y);
-                        }
-                        else {
-                            break;
-                        }
+                        //}
+                        //else {
+                        //    break;
+                        //}
                     }
                 }
 
