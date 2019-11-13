@@ -1,0 +1,124 @@
+﻿
+@{
+    ViewData["Title"] = "Map";
+}
+<h2>Map</h2>
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
+<style>
+
+    .pathDisplay {
+        background-color: black !important;
+    }
+</style>
+<div style="background-image:url('@ViewBag.path');background-repeat: no-repeat">
+    <table border="1">
+        @for (var i = 1; i <= ViewBag.height; i++)
+        {
+            <tr>
+                @for (var j = 1; j <= ViewBag.width; j++)
+                {
+                    <td style="width:10px;height:10px" id="sq-@i-@j" onclick="clickOnSquare(@i,@j);" onmouseover="mouseOverOnSquare(@i,@j);"></td>
+                }
+            </tr>
+        }
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+
+    })
+    var selected = {};
+    var lastSelected = [];
+    function clickOnSquare(x, y) {
+        if (Object.keys(selected).length === 0) {
+            selected[x + '-' + y] = true;
+            lastSelected = [];
+            lastSelected.push(x);
+            lastSelected.push(y);
+            $("#sq-" + x + "-" + y).addClass("pathDisplay");
+            console.log("#sq-" + x + "-" + y);
+        }
+        else {
+            if (lastSelected[0] == x) {
+                if (lastSelected[1] < y) {
+                    for (var i = lastSelected[1] + 1; i <= y; i++) {
+                        if (typeof selected[x + '-' + i] === 'undefined') {
+                            selected[x + '-' + i] = true;
+                            lastSelected = [];
+                            lastSelected.push(x);
+                            lastSelected.push(i);
+                            $("#sq-" + x + "-" + i).addClass("pathDisplay");
+                            console.log("#sq-" + x + "-" + i);
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+                else {
+                    for (var i = lastSelected[1] - 1; i >= y; i--) {
+                        if (typeof selected[x + '-' + i] === 'undefined') {
+                            selected[x + '-' + i] = true;
+                            lastSelected = [];
+                            lastSelected.push(x);
+                            lastSelected.push(i);
+                            $("#sq-" + x + "-" + i).addClass("pathDisplay");
+                            console.log("#sq-" + x + "-" + i);
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (lastSelected[1] == y) {
+                if (lastSelected[0] < x) {
+                    for (var i = lastSelected[0] + 1; i <= x; i++) {
+                        if (typeof selected[i + '-' + y] === 'undefined') {
+                            selected[i + '-' + y] = true;
+                            lastSelected = [];
+                            lastSelected.push(i);
+                            lastSelected.push(y);
+                            $("#sq-" + i + "-" + y).addClass("pathDisplay");
+                            console.log("#sq-" + i + "-" + y);
+                        }
+                        else {
+                            break;
+                        }
+                    }
+
+                }
+                else {
+                    for (var i = lastSelected[0] - 1; i >= x; i--) {
+                        if (typeof selected[i + '-' + y] === 'undefined') {
+                            selected[i + '-' + y] = true;
+                            lastSelected = [];
+                            lastSelected.push(i);
+                            lastSelected.push(y);
+                            $("#sq-" + i + "-" + y).addClass("pathDisplay");
+                            console.log("#sq-" + i + "-" + y);
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+
+            }
+            else {
+                alert('please select a path horizontally or vartically');
+            }
+        }
+
+    }
+
+    function mouseOverOnSquare(x, y) {
+        //  alert(x +'&'+ y);
+    }
+
+    function highlightAllSelected() {
+
+    }
+</script>
