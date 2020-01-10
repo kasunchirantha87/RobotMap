@@ -11,46 +11,76 @@
     .pathDisplay {
         background-color: black !important;
     }
+
+    .initialPointDisplay {
+        background-color: red !important;
+    }
 </style>
-<div style="background-image:url('@ViewBag.path');background-repeat: no-repeat">
+<div class="form-group" style="background-image:url('@ViewBag.path');background-repeat: no-repeat">
     <table border="1">
+        @*<tr>
+                @for (var q = 1; q <= ViewBag.width; q++)
+                {
+                    <th style="width:10px;height:10px;background-color:lightskyblue;font-size:xx-small">@q</th>
+                }
+            </tr>*@
         @for (var i = 1; i <= ViewBag.height; i++)
         {
             <tr>
                 @for (var j = 1; j <= ViewBag.width; j++)
                 {
-                    <td style="width:10px;height:10px" id="sq-@i-@j" onclick="clickOnSquare(@i,@j);" onmouseover="mouseOverOnSquare(@i,@j);"></td>
+                    <td style="width:10px;height:10px" id="sq-@j-@i" onclick="clickOnSquare(@j,@i);"></td>
                 }
             </tr>
         }
     </table>
 </div>
+
+<div class="form-group">
+    <input type="button" class="btn btn-primary" value="Get Cordinates" onclick="getCordinates()" />
+    <input type="button" class="btn btn-warning" value="Reset" onclick="reset()" />
+</div>
+<ol></ol>
+
 <script>
     $(document).ready(function () {
 
     })
     var selected = {};
     var lastSelected = [];
+    var selectedCorners = [];
+    var currentSelected = [];
     function clickOnSquare(x, y) {
+        currentSelected = [];
         if (Object.keys(selected).length === 0) {
             selected[x + '-' + y] = true;
             lastSelected = [];
             lastSelected.push(x);
             lastSelected.push(y);
+            selectedCorners.push(lastSelected);
             $("#sq-" + x + "-" + y).addClass("pathDisplay");
-            console.log("#sq-" + x + "-" + y);
+            //$("#sq-" + x + "-" + y).html('Save');
         }
-        else {
+        else
+        {
             if (lastSelected[0] == x) {
+
+                currentSelected.push(x);
+                currentSelected.push(y);
+
+                if (typeof selected[x + '-' + y] === 'undefined') {
+                    selectedCorners.push(currentSelected);
+                }                
+
                 if (lastSelected[1] < y) {
                     for (var i = lastSelected[1] + 1; i <= y; i++) {
                         //if (typeof selected[x + '-' + i] === 'undefined') {
-                            selected[x + '-' + i] = true;
-                            lastSelected = [];
-                            lastSelected.push(x);
-                            lastSelected.push(i);
-                            $("#sq-" + x + "-" + i).addClass("pathDisplay");
-                            console.log("#sq-" + x + "-" + i);
+                        selected[x + '-' + i] = true;
+                        lastSelected = [];
+                        lastSelected.push(x);
+                        lastSelected.push(i);
+                        $("#sq-" + x + "-" + i).addClass("pathDisplay");
+                        //console.log("#sq-" + x + "-" + i);
                         //}
                         //else {
                         //    break;
@@ -60,29 +90,37 @@
                 else {
                     for (var i = lastSelected[1] - 1; i >= y; i--) {
                         //if (typeof selected[x + '-' + i] === 'undefined') {
-                            selected[x + '-' + i] = true;
-                            lastSelected = [];
-                            lastSelected.push(x);
-                            lastSelected.push(i);
-                            $("#sq-" + x + "-" + i).addClass("pathDisplay");
-                            console.log("#sq-" + x + "-" + i);
+                        selected[x + '-' + i] = true;
+                        lastSelected = [];
+                        lastSelected.push(x);
+                        lastSelected.push(i);
+                        $("#sq-" + x + "-" + i).addClass("pathDisplay");
+                        //console.log("#sq-" + x + "-" + i);
                         //}
                         //else {
-                         //   break;
+                        //   break;
                         //}
                     }
                 }
             }
             else if (lastSelected[1] == y) {
+
+                currentSelected.push(x);
+                currentSelected.push(y);
+
+                if (typeof selected[x + '-' + y] === 'undefined') {
+                    selectedCorners.push(currentSelected);
+                }
+
                 if (lastSelected[0] < x) {
                     for (var i = lastSelected[0] + 1; i <= x; i++) {
                         //if (typeof selected[i + '-' + y] === 'undefined') {
-                            selected[i + '-' + y] = true;
-                            lastSelected = [];
-                            lastSelected.push(i);
-                            lastSelected.push(y);
-                            $("#sq-" + i + "-" + y).addClass("pathDisplay");
-                            console.log("#sq-" + i + "-" + y);
+                        selected[i + '-' + y] = true;
+                        lastSelected = [];
+                        lastSelected.push(i);
+                        lastSelected.push(y);
+                        $("#sq-" + i + "-" + y).addClass("pathDisplay");
+                        //console.log("#sq-" + i + "-" + y);
                         //}
                         //else {
                         //    break;
@@ -93,12 +131,12 @@
                 else {
                     for (var i = lastSelected[0] - 1; i >= x; i--) {
                         //if (typeof selected[i + '-' + y] === 'undefined') {
-                            selected[i + '-' + y] = true;
-                            lastSelected = [];
-                            lastSelected.push(i);
-                            lastSelected.push(y);
-                            $("#sq-" + i + "-" + y).addClass("pathDisplay");
-                            console.log("#sq-" + i + "-" + y);
+                        selected[i + '-' + y] = true;
+                        lastSelected = [];
+                        lastSelected.push(i);
+                        lastSelected.push(y);
+                        $("#sq-" + i + "-" + y).addClass("pathDisplay");
+                        //console.log("#sq-" + i + "-" + y);
                         //}
                         //else {
                         //    break;
@@ -111,14 +149,45 @@
                 alert('please select a path horizontally or vartically');
             }
         }
-
+        console.log(selected);
+        console.log(selectedCorners);
     }
 
     function mouseOverOnSquare(x, y) {
-        //  alert(x +'&'+ y);
+        //alert(x +'&'+ y);
     }
 
     function highlightAllSelected() {
 
     }
+
+    function getCordinates() {
+        $("ol").empty();
+        if (selectedCorners.length > 0) {
+            selectedCorners.forEach(function (item) {
+                $("ol").append("<li>" + "(" + item[0] + "," + item[1] + ")" + "</li>");
+            });
+        }
+    }
+
+    function reset() {
+        Object.keys(selected).forEach(function (key) {
+            var x = key.split('-')[0];
+            var y = key.split('-')[1];
+            $("#sq-" + x + "-" + y).removeClass();
+        });
+
+
+        //var url = window.location.href;
+        //var imageName = url.substring(url.lastIndexOf('=') + 1);
+
+        //$.get("/Path/Map", { imageName: imageName }, function (data) {
+        //});
+        $("ol").empty();
+        selected = {};
+        lastSelected = [];
+        selectedCorners = [];
+        currentSelected = [];
+    }
+
 </script>
