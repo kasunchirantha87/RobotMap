@@ -24,10 +24,10 @@
                     <th style="width:10px;height:10px;background-color:lightskyblue;font-size:xx-small">@q</th>
                 }
             </tr>*@
-        @for (var i = 1; i <= ViewBag.height; i++)
+        @for (var i = 0; i <= ViewBag.height; i++)
         {
             <tr>
-                @for (var j = 1; j <= ViewBag.width; j++)
+                @for (var j = 0; j <= ViewBag.width; j++)
                 {
                     <td style="width:10px;height:10px" id="sq-@j-@i" onclick="clickOnSquare(@j,@i);"></td>
                 }
@@ -37,8 +37,9 @@
 </div>
 
 <div class="form-group">
-    <input type="button" class="btn btn-primary" value="Get Cordinates" onclick="getCordinates()" />
-    <input type="button" class="btn btn-warning" value="Reset" onclick="reset()" />
+    <input type="button" class="btn btn-success" value="Get Cordinates" onclick="getCordinates()" />
+    <input type="button" class="btn btn-primary" value="Undo" onclick="undo()" />
+    <input type="button" class="btn btn-danger" value="Reset" onclick="reset()" />
 </div>
 <ol></ol>
 
@@ -59,18 +60,16 @@
             lastSelected.push(y);
             selectedCorners.push(lastSelected);
             $("#sq-" + x + "-" + y).addClass("pathDisplay");
-            //$("#sq-" + x + "-" + y).html('Save');
         }
-        else
-        {
+        else {
             if (lastSelected[0] == x) {
 
                 currentSelected.push(x);
                 currentSelected.push(y);
 
-                if (typeof selected[x + '-' + y] === 'undefined') {
+                if (typeof selected[x + '-' + y] === 'undefined' || selected[x + '-' + y] === false) {
                     selectedCorners.push(currentSelected);
-                }                
+                }
 
                 if (lastSelected[1] < y) {
                     for (var i = lastSelected[1] + 1; i <= y; i++) {
@@ -108,7 +107,7 @@
                 currentSelected.push(x);
                 currentSelected.push(y);
 
-                if (typeof selected[x + '-' + y] === 'undefined') {
+                if (typeof selected[x + '-' + y] === 'undefined' || selected[x + '-' + y] === false) {
                     selectedCorners.push(currentSelected);
                 }
 
@@ -149,8 +148,6 @@
                 alert('please select a path horizontally or vartically');
             }
         }
-        console.log(selected);
-        console.log(selectedCorners);
     }
 
     function mouseOverOnSquare(x, y) {
@@ -188,6 +185,58 @@
         lastSelected = [];
         selectedCorners = [];
         currentSelected = [];
+    }
+
+    function undo() {
+        if (selectedCorners.length > 1) {
+            var lastCordinateX = selectedCorners[selectedCorners.length - 1][0];
+            var lastCordinateY = selectedCorners[selectedCorners.length - 1][1];
+
+            var beforLastCordinateX = selectedCorners[selectedCorners.length - 2][0];
+            var beforLastCordinateY = selectedCorners[selectedCorners.length - 2][1];
+
+            UndoSelection(lastCordinateX, lastCordinateY, beforLastCordinateX, beforLastCordinateY)
+        }
+    }
+
+    function UndoSelection(lastCordinateX, lastCordinateY, beforLastCordinateX, beforLastCordinateY) {
+
+        lastSelected = [];
+        lastSelected.push(beforLastCordinateX);
+        lastSelected.push(beforLastCordinateY);
+
+        selectedCorners.pop();
+        $("ol").empty();
+
+        if (beforLastCordinateX == lastCordinateX) {
+
+            if (beforLastCordinateY < lastCordinateY) {
+                for (var i = beforLastCordinateY + 1; i <= lastCordinateY; i++) {
+                    selected[beforLastCordinateX + '-' + i] = false;
+                    $("#sq-" + beforLastCordinateX + "-" + i).removeClass();
+                }
+            }
+            else {
+                for (var i = beforLastCordinateY - 1; i >= lastCordinateY; i--) {
+                    selected[beforLastCordinateX + '-' + i] = false;
+                    $("#sq-" + beforLastCordinateX + "-" + i).removeClass();
+                }
+            }
+        }
+
+        if (beforLastCordinateX < lastCordinateX) {
+            for (var i = beforLastCordinateX + 1; i <= lastCordinateX; i++) {
+                selected[i + '-' + beforLastCordinateY] = false;
+                $("#sq-" + i + "-" + beforLastCordinateY).removeClass();
+            }
+
+        }
+        else {
+            for (var i = beforLastCordinateX - 1; i >= lastCordinateX; i--) {
+                selected[i + '-' + beforLastCordinateY] = false;
+                $("#sq-" + i + "-" + beforLastCordinateY).removeClass();
+            }
+        }
     }
 
 </script>
