@@ -67,7 +67,7 @@
                 currentSelected.push(x);
                 currentSelected.push(y);
 
-                if (typeof selected[x + '-' + y] === 'undefined' || selected[x + '-' + y] === false) {
+                if (typeof selected[x + '-' + y] === 'undefined' || (selectedCorners[0][0] == x && selectedCorners[0][1] == y)) {
                     selectedCorners.push(currentSelected);
                 }
 
@@ -107,7 +107,7 @@
                 currentSelected.push(x);
                 currentSelected.push(y);
 
-                if (typeof selected[x + '-' + y] === 'undefined' || selected[x + '-' + y] === false) {
+                if (typeof selected[x + '-' + y] === 'undefined' || (selectedCorners[0][0] == x && selectedCorners[0][1] == y)) {
                     selectedCorners.push(currentSelected);
                 }
 
@@ -174,12 +174,6 @@
             $("#sq-" + x + "-" + y).removeClass();
         });
 
-
-        //var url = window.location.href;
-        //var imageName = url.substring(url.lastIndexOf('=') + 1);
-
-        //$.get("/Path/Map", { imageName: imageName }, function (data) {
-        //});
         $("ol").empty();
         selected = {};
         lastSelected = [];
@@ -188,55 +182,80 @@
     }
 
     function undo() {
-        if (selectedCorners.length > 1) {
-            var lastCordinateX = selectedCorners[selectedCorners.length - 1][0];
-            var lastCordinateY = selectedCorners[selectedCorners.length - 1][1];
-
-            var beforLastCordinateX = selectedCorners[selectedCorners.length - 2][0];
-            var beforLastCordinateY = selectedCorners[selectedCorners.length - 2][1];
-
-            UndoSelection(lastCordinateX, lastCordinateY, beforLastCordinateX, beforLastCordinateY)
-        }
-    }
-
-    function UndoSelection(lastCordinateX, lastCordinateY, beforLastCordinateX, beforLastCordinateY) {
-
-        lastSelected = [];
-        lastSelected.push(beforLastCordinateX);
-        lastSelected.push(beforLastCordinateY);
-
         selectedCorners.pop();
+
+        Object.keys(selected).forEach(function (key) {
+            var x = key.split('-')[0];
+            var y = key.split('-')[1];
+            $("#sq-" + x + "-" + y).removeClass();
+        });
+
         $("ol").empty();
+        selected = {};
+        lastSelected = [];
+        currentSelected = [];
 
-        if (beforLastCordinateX == lastCordinateX) {
+        selectedCorners.forEach(function (key) {
+            var x = key[0];
+            var y = key[1];
 
-            if (beforLastCordinateY < lastCordinateY) {
-                for (var i = beforLastCordinateY + 1; i <= lastCordinateY; i++) {
-                    selected[beforLastCordinateX + '-' + i] = false;
-                    $("#sq-" + beforLastCordinateX + "-" + i).removeClass();
-                }
-            }
-            else {
-                for (var i = beforLastCordinateY - 1; i >= lastCordinateY; i--) {
-                    selected[beforLastCordinateX + '-' + i] = false;
-                    $("#sq-" + beforLastCordinateX + "-" + i).removeClass();
-                }
-            }
-        }
-
-        if (beforLastCordinateX < lastCordinateX) {
-            for (var i = beforLastCordinateX + 1; i <= lastCordinateX; i++) {
-                selected[i + '-' + beforLastCordinateY] = false;
-                $("#sq-" + i + "-" + beforLastCordinateY).removeClass();
-            }
-
+        if (Object.keys(selected).length === 0) {
+            selected[x + '-' + y] = true;
+            lastSelected = [];
+            lastSelected.push(x);
+            lastSelected.push(y);
+            $("#sq-" + x + "-" + y).addClass("pathDisplay");
         }
         else {
-            for (var i = beforLastCordinateX - 1; i >= lastCordinateX; i--) {
-                selected[i + '-' + beforLastCordinateY] = false;
-                $("#sq-" + i + "-" + beforLastCordinateY).removeClass();
+            if (lastSelected[0] == x) {
+
+                currentSelected.push(x);
+                currentSelected.push(y);
+
+                if (lastSelected[1] < y) {
+                    for (var i = lastSelected[1] + 1; i <= y; i++) {
+                        selected[x + '-' + i] = true;
+                        lastSelected = [];
+                        lastSelected.push(x);
+                        lastSelected.push(i);
+                        $("#sq-" + x + "-" + i).addClass("pathDisplay");
+                    }
+                }
+                else {
+                    for (var i = lastSelected[1] - 1; i >= y; i--) {
+                        selected[x + '-' + i] = true;
+                        lastSelected = [];
+                        lastSelected.push(x);
+                        lastSelected.push(i);
+                        $("#sq-" + x + "-" + i).addClass("pathDisplay");
+                    }
+                }
             }
+
+                currentSelected.push(x);
+                currentSelected.push(y);
+
+                if (lastSelected[0] < x) {
+                    for (var i = lastSelected[0] + 1; i <= x; i++) {
+                        selected[i + '-' + y] = true;
+                        lastSelected = [];
+                        lastSelected.push(i);
+                        lastSelected.push(y);
+                        $("#sq-" + i + "-" + y).addClass("pathDisplay");
+                    }
+
+                }
+                else {
+                    for (var i = lastSelected[0] - 1; i >= x; i--) {
+                        selected[i + '-' + y] = true;
+                        lastSelected = [];
+                        lastSelected.push(i);
+                        lastSelected.push(y);
+                        $("#sq-" + i + "-" + y).addClass("pathDisplay");
+                    }
+                }
         }
+        });
     }
 
 </script>

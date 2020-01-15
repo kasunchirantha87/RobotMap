@@ -45,16 +45,29 @@ namespace RoadMap.Controllers
             if (file.Length > 0)
             {
 
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", file.FileName);
+                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", file.FileName);
 
-                if (System.IO.File.Exists(path))
+                //if (System.IO.File.Exists(path))
+                //{
+                //    System.IO.File.Delete(path);
+                //}
+
+                int count = 1;
+
+                string fileNameOnly = Path.GetFileNameWithoutExtension(fullPath);
+                string extension = Path.GetExtension(fullPath);
+                string path = Path.GetDirectoryName(fullPath);
+                string newFullPath = fullPath;
+
+                while (System.IO.File.Exists(newFullPath))
                 {
-                    System.IO.File.Delete(path);
+                    string tempFileName = string.Format("{0}({1})", fileNameOnly, count++);
+                    newFullPath = Path.Combine(path, tempFileName + extension);
                 }
 
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", file.FileName);
+                //var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", file.FileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(newFullPath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
